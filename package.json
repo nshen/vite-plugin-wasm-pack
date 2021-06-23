@@ -1,0 +1,42 @@
+{
+  "name": "vite-plugin-wasm-pack",
+  "version": "0.1.0",
+  "description": "wasm-pack for Vite",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc -w"
+  },
+  "keywords": [
+    "vite",
+    "vite-plugin",
+    "wasm-pack",
+    "rust",
+    "webassembly"
+  ],
+  "author": "nshen <nshen121@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nshen/vite-plugin-wasm-pack"
+  },
+  "bugs": {
+    "url": "https://github.com/nshen/vite-plugin-wasm-pack/issues"
+  },
+  "devDependencies": {
+    "@tsconfig/node12": "^1.0.7",
+    "@types/fs-extra": "^9.0.11",
+    "@types/node": "^12.0.0",
+    "prettier": "^2.2.1",
+    "typescript": "^4.3.4",
+    "vite": "^2.3.8"
+  },
+  "dependencies": {
+    "fs-extra": "^10.0.0",
+    "narrowing": "^1.2.0"
+  }
+}
