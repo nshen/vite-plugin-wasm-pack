@@ -2,9 +2,60 @@
 
 [![npm](https://img.shields.io/npm/v/vite-plugin-wasm-pack.svg)](https://www.npmjs.com/package/vite-plugin-wasm-pack)
 
-Vite plugin for [wasm-pack](https://github.com/rustwasm/wasm-pack) rust
+🚚 Vite plugin for rust [wasm-pack](https://github.com/rustwasm/wasm-pack), it's simple.
 
-## Install
+## Quick start
+
+Make sure [wasm-pack](https://github.com/rustwasm/wasm-pack) installed correctly.
+
+Clone this repo or download the [zip file](https://github.com/nshen/vite-plugin-wasm-pack/archive/refs/heads/main.zip), extract the example folder.
+
+```bash
+example
+  |
+  |-- my-crate       # rust project folder, there is a Cargo.toml in it
+  |-- src            # front end source code
+  |   |-- index.ts   # entry point
+  |-- index.html     # html entry
+  |-- vite.config.ts # vite config file
+  |__ package.json   # npm config file
+```
+
+Install npm develop dependencies, **in example folder** run:
+
+```bash
+yarn install
+# or
+# npm install
+```
+
+After that you can build `rust project` to `WebAassembly` by using `wasm-pack`.
+
+```bash
+wasm-pack build ./my-crate --target web
+```
+
+Now the `my-crate` module is ready, start vite dev server.
+
+```bash
+yarn dev
+or
+#npm run dev
+```
+
+Done, if below is showing.
+
+```bash
+  vite v2.3.8 dev server running at:
+
+  > Local: http://localhost:3000/
+
+  ready in 169ms.
+```
+
+---
+
+## Install manually
 
 ```bash
 yarn add vite vite-plugin-wasm-pack -D
