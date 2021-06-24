@@ -10,7 +10,7 @@ Make sure [wasm-pack](https://github.com/rustwasm/wasm-pack) installed correctly
 
 Clone this repo or download the [zip file](https://github.com/nshen/vite-plugin-wasm-pack/archive/refs/heads/main.zip), extract the example folder.
 
-```bash
+```
 example
   |
   |-- my-crate       # rust project folder, there is a Cargo.toml in it
