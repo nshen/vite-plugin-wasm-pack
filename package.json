@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-wasm-pack",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "wasm-pack for Vite",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -16,7 +16,8 @@
     "vite-plugin",
     "wasm-pack",
     "rust",
-    "webassembly"
+    "webassembly",
+    "cargo"
   ],
   "author": "nshen <nshen121@gmail.com>",
   "license": "MIT",
