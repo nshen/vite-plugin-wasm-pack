@@ -22,7 +22,7 @@ function vitePluginWasmPack(crates: string[] | string): Plugin {
     enforce: 'pre',
 
     async buildStart(inputOptions) {
-      cratePaths.forEach(async (cratePath) => {
+      for await (const cratePath of cratePaths) {
         const pkgPath = path.join(cratePath, 'pkg');
         const crateName = path.basename(cratePath);
         if (!fs.existsSync(pkgPath)) {
@@ -52,7 +52,7 @@ function vitePluginWasmPack(crates: string[] | string): Plugin {
           return `input = "/assets/${group1}"`;
         });
         fs.writeFileSync(jsPath, code);
-      });
+      }
     },
 
     configureServer({ middlewares }) {
