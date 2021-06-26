@@ -5,8 +5,9 @@ import { isString } from 'narrowing';
 import { Plugin } from 'vite';
 
 function vitePluginWasmPack(crates: string[] | string): Plugin {
+  const prefix = '@vite-plugin-wasm-pack@';
+  const pkg = 'pkg'; // default folder of wasm-pack module
   const cratePaths: string[] = isString(crates) ? [crates] : crates;
-
   // from ../../my-crate  ->  my_crate_bg.wasm
   function wasmFilename(cratePath: string) {
     return path.basename(cratePath).replace('-', '_') + '_bg.wasm';
@@ -14,16 +15,38 @@ function vitePluginWasmPack(crates: string[] | string): Plugin {
   const wasmMap = new Map<string, string>(); // { 'my_crate_bg.wasm': '../../wasm-game/pkg/wasm_game_bg.wasm' }
   cratePaths.forEach((cratePath) => {
     const wasmFile = wasmFilename(cratePath);
-    wasmMap.set(wasmFile, path.join(cratePath, 'pkg', wasmFile));
+    wasmMap.set(wasmFile, path.join(cratePath, pkg, wasmFile));
   });
 
   return {
     name: 'vite-plugin-wasm-pack',
     enforce: 'pre',
 
+    resolveId(id: string) {
+      for (let i = 0; i < cratePaths.length; i++) {
+        if (path.basename(cratePaths[i]) === id) return prefix + id;
+      }
+      return null;
+    },
+
+    async load(id: string) {
+      if (id.indexOf(prefix) === 0) {
+        id = id.replace(prefix, '');
+        const modulejs = path.join(
+          './node_modules',
+          id,
+          id.replace('-', '_') + '.js'
+        );
+        const code = await fs.promises.readFile(modulejs, {
+          encoding: 'utf-8'
+        });
+        return code;
+      }
+    },
+
     async buildStart(inputOptions) {
       for await (const cratePath of cratePaths) {
-        const pkgPath = path.join(cratePath, 'pkg');
+        const pkgPath = path.join(cratePath, pkg);
         const crateName = path.basename(cratePath);
         if (!fs.existsSync(pkgPath)) {
           console.error(
@@ -61,6 +84,10 @@ function vitePluginWasmPack(crates: string[] | string): Plugin {
         middlewares.use((req, res, next) => {
           if (isString(req.url)) {
             const basename = path.basename(req.url);
+            res.setHeader(
+              'Cache-Control',
+              'no-cache, no-store, must-revalidate'
+            );
             if (basename.endsWith('.wasm') && wasmMap.get(basename) != null) {
               res.writeHead(200, { 'Content-Type': 'application/wasm' });
               fs.createReadStream(wasmMap.get(basename) as string).pipe(res);
