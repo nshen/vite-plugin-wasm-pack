@@ -80,13 +80,7 @@ export default defineConfig({
 });
 ```
 
-⚠ **Don't forget to build your [wasm-pack](https://github.com/rustwasm/wasm-pack) crate first!**
-
-```bash
-wasm-pack build ./my-crate --target web
-```
-
-Add command to `package.json`
+Add script to `package.json`
 
 ```json
 "scripts": {
@@ -95,11 +89,29 @@ Add command to `package.json`
 }
 ```
 
-Start dev server, and install `my-crate` that you build earlier.
+⚠ **Don't forget to build your [wasm-pack](https://github.com/rustwasm/wasm-pack) crate first!**
+
+```bash
+wasm-pack build ./my-crate --target web
+```
+
+Tips: you can add a `wasm` script to `package.json` like this:
+
+```json
+"scripts": {
+    "wasm": "wasm-pack build ./my-crate --target web",
+    "dev": "yarn wasm && vite",
+    "build": "vite build"
+}
+```
+
+Then, run:
 
 ```bash
 yarn dev
 ```
+
+This will start dev server, and install `my-crate` that you built earlier.
 
 ## Complete example
 
