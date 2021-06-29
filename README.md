@@ -113,9 +113,10 @@ yarn dev
 
 This will start dev server, and install `my-crate` that you built earlier.
 
-## Complete example
+## Examples
 
-please check [./example](./example) folder.
+- Quick starter is in [./example](./example) folder.
+- Game of life [[source]](https://github.com/nshen/vite-wasm-game-of-life) [[demo]](http://github.nshen.net/vite-wasm-game-of-life/dist/)
 
 ## License
 

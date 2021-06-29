@@ -1,7 +1,7 @@
 {
   "name": "vite-plugin-wasm-pack",
   "version": "0.1.5",
-  "description": "wasm-pack for Vite",
+  "description": "Vite plugin for rust using wasm-pack 🦀",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -15,8 +15,10 @@
     "vite",
     "vite-plugin",
     "wasm-pack",
+    "wasm-bindgen",
     "rust",
     "webassembly",
+    "wasm",
     "cargo"
   ],
   "author": "nshen <nshen121@gmail.com>",
