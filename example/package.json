@@ -5,7 +5,7 @@
   "license": "MIT",
   "devDependencies": {
     "vite": "^2.3.8",
-    "vite-plugin-wasm-pack": "^0.1.4"
+    "vite-plugin-wasm-pack": "^0.1.5"
   },
   "scripts": {
     "wasm": "wasm-pack build ./my-crate --target web",
