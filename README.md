@@ -1,8 +1,8 @@
-# 🚚 vite-plugin-wasm-pack
+# 🦀 vite-plugin-wasm-pack
 
 [![npm](https://img.shields.io/npm/v/vite-plugin-wasm-pack.svg)](https://www.npmjs.com/package/vite-plugin-wasm-pack)
 
-🚚 Vite plugin for rust [wasm-pack](https://github.com/rustwasm/wasm-pack), it's simple.
+🦀 Vite plugin for rust [wasm-pack](https://github.com/rustwasm/wasm-pack), it's simple.
 
 ## Quick start
 
