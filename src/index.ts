@@ -7,6 +7,8 @@ import { Plugin } from 'vite';
 function vitePluginWasmPack(crates: string[] | string): Plugin {
   const prefix = '@vite-plugin-wasm-pack@';
   const pkg = 'pkg'; // default folder of wasm-pack module
+  let config_base: string;
+  let config_assetsDir: string;
   const cratePaths: string[] = isString(crates) ? [crates] : crates;
   // from ../../my-crate  ->  my_crate_bg.wasm
   function wasmFilename(cratePath: string) {
@@ -21,6 +23,11 @@ function vitePluginWasmPack(crates: string[] | string): Plugin {
   return {
     name: 'vite-plugin-wasm-pack',
     enforce: 'pre',
+
+    configResolved(resolvedConfig) {
+      config_base = resolvedConfig.base;
+      config_assetsDir = resolvedConfig.build.assetsDir;
+    },
 
     resolveId(id: string) {
       for (let i = 0; i < cratePaths.length; i++) {
@@ -72,7 +79,11 @@ function vitePluginWasmPack(crates: string[] | string): Plugin {
         const regex = /input = new URL\('(.+)'.+;/g;
         let code = fs.readFileSync(path.resolve(jsPath), { encoding: 'utf-8' });
         code = code.replace(regex, (match, group1) => {
-          return `input = "/assets/${group1}"`;
+          return `input = "${path.join(
+            config_base,
+            config_assetsDir,
+            group1
+          )}"`;
         });
         fs.writeFileSync(jsPath, code);
       }
