@@ -1,4 +1,5 @@
 import path from 'path';
+import url from 'url';
 import fs from 'fs-extra';
 import chalk from 'chalk';
 import { isString } from 'narrowing';
@@ -23,7 +24,6 @@ function vitePluginWasmPack(crates: string[] | string): Plugin {
   return {
     name: 'vite-plugin-wasm-pack',
     enforce: 'pre',
-
     configResolved(resolvedConfig) {
       config_base = resolvedConfig.base;
       config_assetsDir = resolvedConfig.build.assetsDir;
@@ -79,9 +79,9 @@ function vitePluginWasmPack(crates: string[] | string): Plugin {
         const regex = /input = new URL\('(.+)'.+;/g;
         let code = fs.readFileSync(path.resolve(jsPath), { encoding: 'utf-8' });
         code = code.replace(regex, (match, group1) => {
-          return `input = "${path.join(
-            config_base,
-            config_assetsDir,
+          return `input = "${url.resolve(
+            config_base +
+            config_assetsDir + "/",
             group1
           )}"`;
         });
