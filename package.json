@@ -31,16 +31,16 @@
     "url": "https://github.com/nshen/vite-plugin-wasm-pack/issues"
   },
   "devDependencies": {
-    "@tsconfig/node12": "^1.0.7",
-    "@types/fs-extra": "^9.0.11",
+    "@tsconfig/node12": "^1.0.9",
+    "@types/fs-extra": "^9.0.13",
     "@types/node": "^12.0.0",
-    "prettier": "^2.2.1",
-    "typescript": "^4.3.4",
-    "vite": "^2.3.8"
+    "prettier": "^2.4.1",
+    "typescript": "^4.4.3",
+    "vite": "^2.6.5"
   },
   "dependencies": {
-    "chalk": "^4.1.1",
+    "chalk": "^4.1.2",
     "fs-extra": "^10.0.0",
-    "narrowing": "^1.2.0"
+    "narrowing": "^1.4.0"
   }
 }
