@@ -15,7 +15,7 @@ function vitePluginWasmPack(
   const cratePaths: string[] = isString(crates) ? [crates] : crates;
   // from ../../my-crate  ->  my_crate_bg.wasm
   function wasmFilename(cratePath: string) {
-    return path.basename(cratePath).replace('-', '_') + '_bg.wasm';
+    return path.basename(cratePath).replace(/\-/g, '_') + '_bg.wasm';
   }
   const wasmMap = new Map<string, string>(); // { 'my_crate_bg.wasm': '../../wasm-game/pkg/wasm_game_bg.wasm' }
   cratePaths.forEach((cratePath) => {
@@ -47,7 +47,7 @@ function vitePluginWasmPack(
         const modulejs = path.join(
           './node_modules',
           id,
-          id.replace('-', '_') + '.js'
+          id.replace(/\-/g, '_') + '.js'
         );
         const code = await fs.promises.readFile(modulejs, {
           encoding: 'utf-8'
@@ -82,7 +82,7 @@ function vitePluginWasmPack(
           }
         }
         // replace default load path with '/assets/xxx.wasm'
-        const jsName = crateName.replace('-', '_') + '.js';
+        const jsName = crateName.replace(/\-/g, '_') + '.js';
         const jsPath = path.join('./node_modules', crateName, jsName);
         const regex = /input = new URL\('(.+)'.+;/g;
         let code = fs.readFileSync(path.resolve(jsPath), { encoding: 'utf-8' });
