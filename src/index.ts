@@ -6,24 +6,40 @@ import { Plugin } from 'vite';
 
 function vitePluginWasmPack(
   crates: string[] | string,
-  isNodeModule?: boolean
+  moduleCrates?: string[] | string
 ): Plugin {
   const prefix = '@vite-plugin-wasm-pack@';
   const pkg = 'pkg'; // default folder of wasm-pack module
   let config_base: string;
   let config_assetsDir: string;
   const cratePaths: string[] = isString(crates) ? [crates] : crates;
+  const modulePaths: string[] = !moduleCrates
+    ? []
+    : isString(moduleCrates)
+    ? [moduleCrates]
+    : moduleCrates;
+
   // from ../../my-crate  ->  my_crate_bg.wasm
   function wasmFilename(cratePath: string) {
     return path.basename(cratePath).replace(/\-/g, '_') + '_bg.wasm';
   }
-  const wasmMap = new Map<string, string>(); // { 'my_crate_bg.wasm': '../../wasm-game/pkg/wasm_game_bg.wasm' }
+  const wasmMap = new Map<string, { path: string; isNodeModule: boolean }>();
+  // { 'my_crate_bg.wasm': '../../my_crate/pkg/my_crate_bg.wasm' }
   cratePaths.forEach((cratePath) => {
     const wasmFile = wasmFilename(cratePath);
-    const wasmPath = isNodeModule
-      ? path.join('node_modules', cratePath, wasmFile)
-      : path.join(cratePath, pkg, wasmFile);
-    wasmMap.set(wasmFile, wasmPath);
+    wasmMap.set(wasmFile, {
+      path: path.join(cratePath, pkg, wasmFile),
+      isNodeModule: false
+    });
+  });
+
+  // { 'my_crate_bg.wasm': 'node_modules/my_crate/my_crate_bg.wasm' }
+  modulePaths.forEach((cratePath) => {
+    const wasmFile = wasmFilename(cratePath);
+    wasmMap.set(wasmFile, {
+      path: path.join('node_modules', cratePath, wasmFile),
+      isNodeModule: false
+    });
   });
 
   return {
@@ -56,12 +72,13 @@ function vitePluginWasmPack(
       }
     },
 
-    async buildStart(inputOptions) {
-      for await (const cratePath of cratePaths) {
+    async buildStart(_inputOptions) {
+      const prepareBuild = async (cratePath: string, isNodeModule: boolean) => {
         const pkgPath = isNodeModule
           ? path.join('node_modules', cratePath)
           : path.join(cratePath, pkg);
         const crateName = path.basename(cratePath);
+
         if (!fs.existsSync(pkgPath)) {
           console.error(
             chalk.bold.red('Error: ') +
@@ -86,7 +103,7 @@ function vitePluginWasmPack(
         const jsPath = path.join('./node_modules', crateName, jsName);
         const regex = /input = new URL\('(.+)'.+;/g;
         let code = fs.readFileSync(path.resolve(jsPath), { encoding: 'utf-8' });
-        code = code.replace(regex, (match, group1) => {
+        code = code.replace(regex, (_match, group1) => {
           return `input = "${path.posix.join(
             config_base,
             config_assetsDir,
@@ -94,6 +111,13 @@ function vitePluginWasmPack(
           )}"`;
         });
         fs.writeFileSync(jsPath, code);
+      };
+
+      for await (const cratePath of cratePaths) {
+        await prepareBuild(cratePath, false);
+      }
+      for await (const cratePath of modulePaths) {
+        await prepareBuild(cratePath, true);
       }
     },
 
@@ -107,9 +131,10 @@ function vitePluginWasmPack(
               'Cache-Control',
               'no-cache, no-store, must-revalidate'
             );
-            if (basename.endsWith('.wasm') && wasmMap.get(basename) != null) {
+            const entry = wasmMap.get(basename);
+            if (basename.endsWith('.wasm') && entry) {
               res.writeHead(200, { 'Content-Type': 'application/wasm' });
-              fs.createReadStream(wasmMap.get(basename) as string).pipe(res);
+              fs.createReadStream(entry.path).pipe(res);
             } else {
               next();
             }
@@ -125,7 +150,7 @@ function vitePluginWasmPack(
         this.emitFile({
           type: 'asset',
           fileName: `assets/${wasmFile}`,
-          source: fs.readFileSync(wasmMap.get(wasmFile) as string)
+          source: fs.readFileSync(wasmMap.get(wasmFile)!.path)
         });
       });
     }
