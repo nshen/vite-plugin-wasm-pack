@@ -1,7 +1,7 @@
-import path from 'path';
-import fs from 'fs-extra';
 import chalk from 'chalk';
+import fs from 'fs-extra';
 import { isString } from 'narrowing';
+import path from 'path';
 import { Plugin } from 'vite';
 
 function vitePluginWasmPack(
@@ -20,9 +20,10 @@ function vitePluginWasmPack(
     : moduleCrates;
 
   // from ../../my-crate  ->  my_crate_bg.wasm
-  function wasmFilename(cratePath: string) {
+  const wasmFilename = (cratePath: string) => {
     return path.basename(cratePath).replace(/\-/g, '_') + '_bg.wasm';
-  }
+  };
+
   const wasmMap = new Map<string, { path: string; isNodeModule: boolean }>();
   // { 'my_crate_bg.wasm': '../../my_crate/pkg/my_crate_bg.wasm' }
   cratePaths.forEach((cratePath) => {
@@ -38,7 +39,7 @@ function vitePluginWasmPack(
     const wasmFile = wasmFilename(cratePath);
     wasmMap.set(wasmFile, {
       path: path.join('node_modules', cratePath, wasmFile),
-      isNodeModule: false
+      isNodeModule: true
     });
   });
 
@@ -146,6 +147,15 @@ function vitePluginWasmPack(
     buildEnd() {
       // copy xxx.wasm files to /assets/xxx.wasm
       cratePaths.forEach((c) => {
+        const wasmFile = wasmFilename(c);
+        this.emitFile({
+          type: 'asset',
+          fileName: `assets/${wasmFile}`,
+          source: fs.readFileSync(wasmMap.get(wasmFile)!.path)
+        });
+      });
+
+      modulePaths.forEach((c) => {
         const wasmFile = wasmFilename(c);
         this.emitFile({
           type: 'asset',
