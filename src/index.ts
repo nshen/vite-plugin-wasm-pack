@@ -18,14 +18,14 @@ function vitePluginWasmPack(
     : isString(moduleCrates)
     ? [moduleCrates]
     : moduleCrates;
-
   // from ../../my-crate  ->  my_crate_bg.wasm
   const wasmFilename = (cratePath: string) => {
     return path.basename(cratePath).replace(/\-/g, '_') + '_bg.wasm';
   };
-
-  const wasmMap = new Map<string, { path: string; isNodeModule: boolean }>();
-  // { 'my_crate_bg.wasm': '../../my_crate/pkg/my_crate_bg.wasm' }
+  type CrateType = { path: string; isNodeModule: boolean };
+  // wasmfileName : CrateType
+  const wasmMap = new Map<string, CrateType>();
+  // 'my_crate_bg.wasm': {path:'../../my_crate/pkg/my_crate_bg.wasm', isNodeModule: false}
   cratePaths.forEach((cratePath) => {
     const wasmFile = wasmFilename(cratePath);
     wasmMap.set(wasmFile, {
@@ -33,8 +33,7 @@ function vitePluginWasmPack(
       isNodeModule: false
     });
   });
-
-  // { 'my_crate_bg.wasm': 'node_modules/my_crate/my_crate_bg.wasm' }
+  // 'my_crate_bg.wasm': { path: 'node_modules/my_crate/my_crate_bg.wasm', isNodeModule: true }
   modulePaths.forEach((cratePath) => {
     const wasmFile = wasmFilename(cratePath);
     wasmMap.set(wasmFile, {
@@ -79,7 +78,6 @@ function vitePluginWasmPack(
           ? path.join('node_modules', cratePath)
           : path.join(cratePath, pkg);
         const crateName = path.basename(cratePath);
-
         if (!fs.existsSync(pkgPath)) {
           console.error(
             chalk.bold.red('Error: ') +
@@ -117,6 +115,7 @@ function vitePluginWasmPack(
       for await (const cratePath of cratePaths) {
         await prepareBuild(cratePath, false);
       }
+
       for await (const cratePath of modulePaths) {
         await prepareBuild(cratePath, true);
       }
@@ -146,21 +145,11 @@ function vitePluginWasmPack(
 
     buildEnd() {
       // copy xxx.wasm files to /assets/xxx.wasm
-      cratePaths.forEach((c) => {
-        const wasmFile = wasmFilename(c);
+      wasmMap.forEach((crate, fileName) => {
         this.emitFile({
           type: 'asset',
-          fileName: `assets/${wasmFile}`,
-          source: fs.readFileSync(wasmMap.get(wasmFile)!.path)
-        });
-      });
-
-      modulePaths.forEach((c) => {
-        const wasmFile = wasmFilename(c);
-        this.emitFile({
-          type: 'asset',
-          fileName: `assets/${wasmFile}`,
-          source: fs.readFileSync(wasmMap.get(wasmFile)!.path)
+          fileName: `assets/${fileName}`,
+          source: fs.readFileSync(crate.path)
         });
       });
     }
