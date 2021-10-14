@@ -46,7 +46,7 @@ or
 Done, if below is showing.
 
 ```bash
-  vite v2.3.8 dev server running at:
+  vite v2.6.5 dev server running at:
 
   > Local: http://localhost:3000/
 
@@ -72,10 +72,7 @@ import { defineConfig } from 'vite';
 import wasmPack from 'vite-plugin-wasm-pack';
 
 export default defineConfig({
-  build: {
-    minify: false
-  },
-  // pass your crate path to the plugin
+  // pass your local crate path to the plugin
   plugins: [wasmPack('./my-crate')]
 });
 ```
@@ -112,6 +109,16 @@ yarn dev
 ```
 
 This will start dev server, and install `my-crate` that you built earlier.
+
+## Use wasm-pack package installed via npm
+
+If you want use a package from npm that built with wasm-pack, like this one [test-npm-crate](https://www.npmjs.com/package/test-npm-crate)
+
+you have to pass the package name to the second param of our plugin.
+
+`wasmPack(['./my-local-crate'],['test-npm-crate'])`
+
+full example is in [./npm-crate-example](./npm-crate-example) folder.
 
 ## Examples
 
