@@ -1,8 +1,11 @@
 # 🦀 vite-plugin-wasm-pack
 
 [![npm](https://img.shields.io/npm/v/vite-plugin-wasm-pack.svg)](https://www.npmjs.com/package/vite-plugin-wasm-pack)
+[![npm](https://img.shields.io/npm/dt/vite-plugin-wasm-pack)](https://www.npmjs.com/package/vite-plugin-wasm-pack)
 
 🦀 Vite plugin for rust [wasm-pack](https://github.com/rustwasm/wasm-pack), it's simple.
+
+<p align="center"><img width="404" src="./banner.png" alt="vite + wasm pic"></a></p>
 
 ## Quick start
 
