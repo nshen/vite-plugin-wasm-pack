@@ -135,7 +135,8 @@ full example is in [./npm-crate-example](./npm-crate-example) folder.
 ## Examples
 
 - Quick starter is in [./example](./example) folder.
-- Game of life [[source]](https://github.com/nshen/vite-wasm-game-of-life) [[demo]](http://github.nshen.net/vite-wasm-game-of-life/dist/)
+- Game of life [[demo]](http://github.nshen.net/vite-wasm-game-of-life/dist/) [[source]](https://github.com/nshen/vite-wasm-game-of-life)
+- Photon-vite [[demo]](http://github.nshen.net/photon-vite/) [[source]](https://github.com/nshen/photon-vite)
 
 ## License
 
