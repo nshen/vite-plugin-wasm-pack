@@ -125,7 +125,7 @@ function vitePluginWasmPack(
         }
         // replace default load path with '/assets/xxx.wasm'
         const jsName = crateName.replace(/\-/g, '_') + '.js';
-        const jsPath = path.join('./node_modules', crateName, jsName);
+        const jsPath = path.join('./node_modules', cratePath, jsName);
         const regex = /input = new URL\('(.+)'.+;/g;
         let code = fs.readFileSync(path.resolve(jsPath), { encoding: 'utf-8' });
         code = code.replace(regex, (_match, group1) => {
