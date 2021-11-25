@@ -183,3 +183,9 @@ function vitePluginWasmPack(
 }
 
 export default vitePluginWasmPack;
+
+// https://github.com/sveltejs/vite-plugin-svelte/issues/214
+if (typeof module !== 'undefined') {
+  module.exports = vitePluginWasmPack;
+  vitePluginWasmPack.default = vitePluginWasmPack;
+}
