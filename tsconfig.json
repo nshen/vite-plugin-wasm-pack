@@ -6,6 +6,8 @@
     "compilerOptions": {
         "outDir": "dist",
         "declaration": true,
+        "esModuleInterop": true,
+        "moduleResolution": "node",
         // "removeComments": true
     },
 }

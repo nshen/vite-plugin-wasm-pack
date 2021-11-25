@@ -3,12 +3,13 @@
   "version": "0.1.8",
   "description": "Vite plugin for rust using wasm-pack 🦀",
   "main": "dist/index.js",
+  "module": "esm/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && tsc -p tsconfig.esm.json",
     "dev": "tsc -w"
   },
   "keywords": [
