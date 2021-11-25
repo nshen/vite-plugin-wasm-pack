@@ -132,11 +132,25 @@ you have to pass the package name to the second param of our plugin.
 
 full example is in [./npm-crate-example](./npm-crate-example) folder.
 
+notice, we only support package build with `--target web` for now , if a package you use is built without `--target web`, you should rebuild it. 
+
+like this example  [[Photon-vite]](http://github.nshen.net/photon-vite/) [[source]](https://github.com/nshen/photon-vite)
+
+## Cache Problem
+
+I'm not sure if anybody have met the problem that after modified your package, your package don't update.
+
+That's becasue vite pre bundling your package, you can follow [vite guide](
+https://vitejs.dev/guide/dep-pre-bundling.html) to solve the problem.
+
+If you met the problem , or any problems. feel free to [create an issue](https://github.com/nshen/vite-plugin-wasm-pack/issues), let me see if I can do something to help you, thanks.
+
 ## Examples
 
 - Quick starter is in [./example](./example) folder.
 - Game of life [[demo]](http://github.nshen.net/vite-wasm-game-of-life/dist/) [[source]](https://github.com/nshen/vite-wasm-game-of-life)
 - Photon-vite [[demo]](http://github.nshen.net/photon-vite/) [[source]](https://github.com/nshen/photon-vite)
+
 
 ## License
 
