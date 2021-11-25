@@ -2,7 +2,7 @@ import chalk from 'chalk';
 import fs from 'fs-extra';
 import { isString } from 'narrowing';
 import path from 'path';
-import { Plugin } from 'vite';
+import { PluginOption } from 'vite';
 
 /**
  *   return a Vite plugin for handling wasm-pack crate
@@ -27,7 +27,7 @@ import { Plugin } from 'vite';
 function vitePluginWasmPack(
   crates: string[] | string,
   moduleCrates?: string[] | string
-): Plugin {
+): PluginOption {
   const prefix = '@vite-plugin-wasm-pack@';
   const pkg = 'pkg'; // default folder of wasm-pack module
   let config_base: string;
