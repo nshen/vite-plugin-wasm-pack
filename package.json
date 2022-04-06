@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-wasm-pack",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "Vite plugin for rust using wasm-pack 🦀",
   "main": "dist/index.js",
   "module": "esm/index.js",
