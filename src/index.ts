@@ -127,12 +127,12 @@ function vitePluginWasmPack(
         const jsName = crateName.replace(/\-/g, '_') + '.js';
 
         /**
-         * if name is '@group/test' for npm module,
+         * if use node module and name is '@group/test'
          * cratePath === '@group/test'
          * crateName === 'test'
          */
 
-        const jsPath = path.join('./node_modules', cratePath, jsName);
+        const jsPath = path.join('./node_modules', isNodeModule ? cratePath : crateName, jsName);
         const regex = /input = new URL\('(.+)'.+;/g;
         let code = fs.readFileSync(path.resolve(jsPath), { encoding: 'utf-8' });
         code = code.replace(regex, (_match, group1) => {
