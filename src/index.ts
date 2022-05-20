@@ -133,7 +133,7 @@ function vitePluginWasmPack(
          * crateName === 'test'
          */
 
-        let jsPath = path.join('./node_modules', isNodeModule ? cratePath : crateName, jsName);
+        let jsPath = path.join('./node_modules', crateName, jsName);
         if (isNodeModule) {
           jsPath = path.join(pkgPath, jsName);
         }
