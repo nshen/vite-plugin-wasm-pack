@@ -3,3 +3,4 @@ dist
 esm
 yarn.lock
 example/my-crate/target
+.DS_Store
