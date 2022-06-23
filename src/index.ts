@@ -39,26 +39,31 @@ function vitePluginWasmPack(
     ? [moduleCrates]
     : moduleCrates;
   // from ../../my-crate  ->  my_crate_bg.wasm
-  const wasmFilename = (cratePath: string) => {
-    return path.basename(cratePath).replace(/\-/g, '_') + '_bg.wasm';
+  const findModuleFilePath = (cratePath: string, extension: string) => {
+    const files = JSON.parse(fs.readFileSync(path.join(cratePath, 'package.json'), 'utf-8'))['files'] as string[];
+    const wasm = files.filter(x => x.endsWith(extension))[0];
+    return path.join(cratePath, wasm);
   };
   type CrateType = { path: string; isNodeModule: boolean };
   // wasmfileName : CrateType
   const wasmMap = new Map<string, CrateType>();
   // 'my_crate_bg.wasm': {path:'../../my_crate/pkg/my_crate_bg.wasm', isNodeModule: false}
   cratePaths.forEach((cratePath) => {
-    const wasmFile = wasmFilename(cratePath);
-    wasmMap.set(wasmFile, {
-      path: path.join(cratePath, pkg, wasmFile),
+    const wasmFile = findModuleFilePath(path.join(cratePath, pkg), '.wasm');
+
+    wasmMap.set(path.basename(wasmFile), {
+      path: wasmFile,
       isNodeModule: false
     });
   });
+
   // 'my_crate_bg.wasm': { path: 'node_modules/my_crate/my_crate_bg.wasm', isNodeModule: true }
   modulePaths.forEach((cratePath) => {
-    const wasmFile = wasmFilename(cratePath);
-    const wasmDirectory = path.dirname(require.resolve(cratePath));
-    wasmMap.set(wasmFile, {
-      path: path.join(wasmDirectory, wasmFile),
+    const wasmDirectory = path.join(process.cwd(), 'node_modules', cratePath);
+    const wasmFile = findModuleFilePath(wasmDirectory, '.wasm');
+
+    wasmMap.set(path.basename(wasmFile), {
+      path: wasmFile,
       isNodeModule: true
     });
   });
@@ -96,7 +101,7 @@ function vitePluginWasmPack(
     async buildStart(_inputOptions) {
       const prepareBuild = async (cratePath: string, isNodeModule: boolean) => {
         const pkgPath = isNodeModule
-          ? path.dirname(require.resolve(cratePath))
+          ? path.join('./node_modules', cratePath)
           : path.join(cratePath, pkg);
         const crateName = path.basename(cratePath);
         if (!fs.existsSync(pkgPath)) {
@@ -125,7 +130,8 @@ function vitePluginWasmPack(
           }
         }
         // replace default load path with '/assets/xxx.wasm'
-        const jsName = crateName.replace(/\-/g, '_') + '.js';
+        const jsPath = findModuleFilePath(path.join('./node_modules', crateName), '.js')
+
 
         /**
          * if use node module and name is '@group/test'
@@ -133,12 +139,8 @@ function vitePluginWasmPack(
          * crateName === 'test'
          */
 
-        let jsPath = path.join('./node_modules', crateName, jsName);
-        if (isNodeModule) {
-          jsPath = path.join(pkgPath, jsName);
-        }
         const regex = /input = new URL\('(.+)'.+;/g;
-        let code = fs.readFileSync(path.resolve(jsPath), { encoding: 'utf-8' });
+        let code = fs.readFileSync(jsPath, { encoding: 'utf-8' });
         code = code.replace(regex, (_match, group1) => {
           return `input = "${path.posix.join(
             config_base,
