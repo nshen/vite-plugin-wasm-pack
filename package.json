@@ -1,5 +1,5 @@
 {
-  "name": "vite-plugin-wasm-pack",
+  "name": "@jondot/vite-plugin-wasm-pack",
   "version": "0.1.12",
   "description": "Vite plugin for rust using wasm-pack 🦀",
   "main": "dist/index.js",
