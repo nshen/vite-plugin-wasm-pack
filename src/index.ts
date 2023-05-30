@@ -163,7 +163,7 @@ function vitePluginWasmPack(
         // send 'root/pkg/xxx.wasm' file to user
         middlewares.use((req, res, next) => {
           if (isString(req.url)) {
-            const basename = path.basename(req.url);
+            const basename = path.basename(req.url).replace(/\?.*$/); // remove ?t=abc and similar from basename
             res.setHeader(
               'Cache-Control',
               'no-cache, no-store, must-revalidate'
