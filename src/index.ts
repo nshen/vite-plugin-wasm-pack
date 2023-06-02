@@ -121,7 +121,7 @@ function vitePluginWasmPack(
           try {
             await fs.copy(pkgPath, path.join('node_modules', crateName));
           } catch (error) {
-            this.error(`copy crates failed`);
+            this.error(`copy crates failed: ${error}`);
           }
         }
         // replace default load path with '/assets/xxx.wasm'
