@@ -159,25 +159,23 @@ function vitePluginWasmPack(
     },
 
     configureServer({ middlewares }) {
-      return () => {
-        // send 'root/pkg/xxx.wasm' file to user
-        middlewares.use((req, res, next) => {
-          if (isString(req.url)) {
-            const basename = path.basename(req.url);
-            res.setHeader(
-              'Cache-Control',
-              'no-cache, no-store, must-revalidate'
-            );
-            const entry = wasmMap.get(basename);
-            if (basename.endsWith('.wasm') && entry) {
-              res.writeHead(200, { 'Content-Type': 'application/wasm' });
-              fs.createReadStream(entry.path).pipe(res);
-            } else {
-              next();
-            }
+      // send 'root/pkg/xxx.wasm' file to user
+      middlewares.use((req, res, next) => {
+        if (isString(req.url)) {
+          const basename = path.basename(req.url);
+          res.setHeader(
+            'Cache-Control',
+            'no-cache, no-store, must-revalidate'
+          );
+          const entry = wasmMap.get(basename);
+          if (basename.endsWith('.wasm') && entry) {
+            res.writeHead(200, { 'Content-Type': 'application/wasm' });
+            fs.createReadStream(entry.path).pipe(res);
+          } else {
+            next();
           }
-        });
-      };
+        }
+      });
     },
 
     buildEnd() {
