@@ -23,10 +23,12 @@ import { PluginOption } from 'vite';
  *
  * @param crates local crates paths, if you only use crates from npm, leave an empty array here.
  * @param moduleCrates crates names from npm
+ * @param outName use the wasm-pack --out-name for the published package
  */
 function vitePluginWasmPack(
   crates: string[] | string,
-  moduleCrates?: string[] | string
+  moduleCrates?: string[] | string,
+  outName?: string,
 ): PluginOption {
   const prefix = '@vite-plugin-wasm-pack@';
   const pkg = 'pkg'; // default folder of wasm-pack module
@@ -40,6 +42,9 @@ function vitePluginWasmPack(
     : moduleCrates;
   // from ../../my-crate  ->  my_crate_bg.wasm
   const wasmFilename = (cratePath: string) => {
+    if (outName) {
+      return outName + '_bg.wasm';
+    }
     return path.basename(cratePath).replace(/\-/g, '_') + '_bg.wasm';
   };
   type CrateType = { path: string; isNodeModule: boolean };
@@ -125,7 +130,7 @@ function vitePluginWasmPack(
           }
         }
         // replace default load path with '/assets/xxx.wasm'
-        const jsName = crateName.replace(/\-/g, '_') + '.js';
+        const jsName = (outName ?? crateName.replace(/\-/g, '_')) + '.js';
 
         /**
          * if use node module and name is '@group/test'
