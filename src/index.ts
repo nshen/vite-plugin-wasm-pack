@@ -161,12 +161,10 @@ function vitePluginWasmPack(
     configureServer({ middlewares }) {
       // send 'root/pkg/xxx.wasm' file to user
       middlewares.use((req, res, next) => {
-        if (isString(req.url)) {
-          const basename = path.basename(req.url);
-          res.setHeader(
-            'Cache-Control',
-            'no-cache, no-store, must-revalidate'
-          );
+        const incomingUrl = req.originalUrl ?? req.url;
+        if (isString(incomingUrl)) {
+          const basename = path.basename(incomingUrl);
+          res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
           const entry = wasmMap.get(basename);
           if (basename.endsWith('.wasm') && entry) {
             res.writeHead(200, { 'Content-Type': 'application/wasm' });
